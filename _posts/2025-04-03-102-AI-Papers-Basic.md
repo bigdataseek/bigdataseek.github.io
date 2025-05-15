@@ -667,18 +667,3 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
 
 18. Latent Representation (잠재 표현): 
    - 데이터의 압축된 형태의 표현으로, 생성 모델이 데이터를 생성하는 데 사용됨.
-
-<!-- <link href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" rel="stylesheet" />
-<script type="module">
-	import { createChat } from 'https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js';
-
-	createChat({
-		webhookUrl: 'http://localhost:5678/webhook/87c9fad4-fa68-489a-93b3-0665a8c87632/chat'
-	});
-</script>
-
-
-
-
-
-<elevenlabs-convai agent-id="MmylXOJzdfBtf6ywcmFI"></elevenlabs-convai><script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script> -->
