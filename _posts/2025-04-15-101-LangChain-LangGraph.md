@@ -101,7 +101,7 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
 
 ```python
 # 1. 환경 설정
-# pip install python-dotenv langchain openai pinecone-client
+# 설치: pip install langchain langchain-openai langchain-pinecone python-dotenv pinecone
 
 import os
 from dotenv import load_dotenv
@@ -110,65 +110,77 @@ load_dotenv()
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-PINECONE_ENVIRONMENT = os.getenv("PINECONE_ENVIRONMENT")
-PINECONE_INDEX_NAME = "your-index-name" # 실제 Pinecone 인덱스 이름으로 변경
+PINECONE_INDEX_NAME = "your-index-name"  # 실제 Pinecone 인덱스 이름으로 변경
+
+# Pinecone 초기화 (최신 pinecone-client 사용)
+from pinecone import Pinecone as PineconeClient
+
+pinecone_client = PineconeClient(api_key=PINECONE_API_KEY)
 
 # 2. LLM 래퍼
-from langchain.llms import OpenAI
+from langchain_openai import OpenAI
 
-llm = OpenAI(openai_api_key=OPENAI_API_KEY)
+llm = OpenAI(openai_api_key=OPENAI_API_KEY, model="gpt-3.5-turbo-instruct")  # 명시적으로 모델 지정
 question = "오늘 날씨 어때?"
-answer = llm(question)
+answer = llm.invoke(question)  # invoke()로 변경
 print(f"질문: {question}")
 print(f"답변: {answer}")
 
 # 3. 프롬프트 템플릿
-from langchain.prompts import PromptTemplate
+from langchain.prompts import ChatPromptTemplate  # ChatPromptTemplate 사용
 
 template = "당신은 {subject} 전문가입니다. {query}에 대해 간결하게 답변해주세요."
-prompt = PromptTemplate(template=template, input_variables=["subject", "query"])
+prompt = ChatPromptTemplate.from_template(template)  # ChatPromptTemplate로 변경
 
 subject = "고양이"
 query = "가장 좋아하는 음식은?"
 formatted_prompt = prompt.format(subject=subject, query=query)
-output = llm(formatted_prompt)
+output = llm.invoke(formatted_prompt)  # invoke()로 변경
 print(f"생성된 프롬프트: {formatted_prompt}")
 print(f"LLM 답변: {output}")
 
-# 4. 체인 (LLM과 프롬프트 템플릿 결합)
-from langchain.chains import LLMChain
+# 4. 체인 (RunnableSequence로 최신화)
+from langchain_core.runnables import RunnableSequence
 
-chain = LLMChain(llm=llm, prompt=prompt)
-result = chain.run(subject="강아지", query="가장 좋아하는 장난감은?")
+chain = prompt | llm  # | 연산자로 체인 구성
+result = chain.invoke({"subject": "강아지", "query": "가장 좋아하는 장난감은?"})  # invoke()로 변경
 print(f"체인 실행 결과: {result}")
 
-# 5. 임베딩 및 벡터 스토어 (Pinecone 예시)
-from langchain.embeddings.openai import OpenAIEmbeddings
+# 5. 임베딩 및 벡터 스토어 (Pinecone)
+from langchain_openai import OpenAIEmbeddings
 from langchain.text_splitter import CharacterTextSplitter
-from langchain.vectorstores import Pinecone
+from langchain_pinecone import PineconeVectorStore  # langchain_pinecone 사용
 
 embeddings = OpenAIEmbeddings(openai_api_key=OPENAI_API_KEY)
 text = "LangChain은 LLM 기반 애플리케이션 개발을 위한 프레임워크입니다. 다양한 기능을 제공합니다."
 text_splitter = CharacterTextSplitter(chunk_size=100, chunk_overlap=0)
 texts = text_splitter.split_text(text)
 
-# Pinecone 연결 (index_name, embedding, api_key, environment 필요)
-Pinecone.from_texts(texts, embeddings, index_name=PINECONE_INDEX_NAME, api_key=PINECONE_API_KEY, environment=PINECONE_ENVIRONMENT)
+# Pinecone 벡터 스토어 초기화
+vectorstore = PineconeVectorStore.from_texts(
+    texts,
+    embeddings,
+    index_name=PINECONE_INDEX_NAME,
+    pinecone_api_key=PINECONE_API_KEY
+)
 
-# 유사성 검색 (Pinecone에 데이터가 저장되어 있어야 함)
-pinecone = Pinecone.from_existing_index(index_name=PINECONE_INDEX_NAME, embedding=embeddings)
+# 유사성 검색
 query = "LangChain의 주요 기능은 무엇인가요?"
-docs = pinecone.similarity_search(query)
+docs = vectorstore.similarity_search(query)
 print(docs[0].page_content)
 
-# 6. 에이전트 (간단한 Python REPL 에이전트 예시)
-from langchain.agents import load_tools, initialize_agent, AgentType
+# 6. 에이전트 (최신 create_react_agent 사용)
+from langchain.agents import create_react_agent, AgentExecutor
+from langchain.tools import Tool
+from langchain.agents import load_tools
 
 tools = load_tools(["python_repl"], llm=llm)
-agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
+agent = create_react_agent(llm, tools, prompt_template=None)  # 기본 ReAct 프롬프트 사용
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
 
-# 주의: 아래 코드는 실제 Python 코드를 실행하므로 신뢰할 수 없는 입력에 대해서는 주의해야 합니다.
-agent.run("2 더하기 2는 얼마야? 그리고 그 결과를 제곱해줘.")
+# 주의: 아래 코드는 실제 Python 코드를 실행하므로 신뢰할 수 없는 입력에 주의
+result = agent_executor.invoke({"input": "2 더하기 2는 얼마야? 그리고 그 결과를 제곱해줘."})
+print(f"에이전트 실행 결과: {result['output']}")
 ```
 
 **참고:**
