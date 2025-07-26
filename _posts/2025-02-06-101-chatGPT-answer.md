@@ -1,5 +1,5 @@
 ---
-title: 1차시 2:데이터분석에서 GenAI의 도움
+title: 2차시 2:데이터분석에서 GenAI의 도움
 layout: single
 classes: wide
 last_modified_at: 2025-02-07T16:12:19-04:00

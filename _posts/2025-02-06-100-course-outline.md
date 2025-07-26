@@ -1,5 +1,5 @@
 ---
-title: 1차시 1:데이터 분석 강의 개요
+title: 2차시 1:데이터 분석 강의 개요
 layout: single
 classes: wide
 categories:

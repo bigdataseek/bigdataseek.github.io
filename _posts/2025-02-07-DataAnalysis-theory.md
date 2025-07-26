@@ -1,5 +1,5 @@
 ---
-title: 1차시 3:GenAI의 한계 및 인간의 이론적 지식 필요성
+title: 2차시 3:GenAI의 한계 및 인간의 이론적 지식 필요성
 layout: single
 classes: wide
 last_modified_at: 2025-02-07T15:12:19-04:00

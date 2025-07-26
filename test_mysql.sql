@@ -1,0 +1,12 @@
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS test//
+
+CREATE PROCEDURE test() 
+	BEGIN 
+		SELECT '프로시저 내부'; 
+	END//
+
+DELIMITER ;
+
+CALL test();
