@@ -581,12 +581,14 @@ sns.set_theme()  # 또는 sns.set_style("whitegrid")
 
     ```python
     # 상관관계 히트맵
+    
     iris = sns.load_dataset("iris")
     plt.figure(figsize=(8, 6))
 
     # 수치형 특성만 선택하여 상관 관계 계산
     # DataFrame의 .corr() 메서드를 사용하여 각 수치형 특성 간의 피어슨 상관 계수를 계산합니다. 
     # 이 결과는 상관 관계 행렬(DataFrame)이 됩니다
+    # 히트맵은 2D 행렬 형태의 데이터만 입력 가능하므로,
     correlation_matrix = iris.select_dtypes(include=[np.number]).corr()
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
     plt.title('붓꽃 데이터 상관관계')
@@ -655,6 +657,7 @@ plt.title('연도별 월간 항공 승객 수')
 plt.show()
 
 # 히트맵으로 시계열 패턴 보기
+# 히트맵은 2D 행렬 형태의 데이터만 입력 가능하므로,
 plt.figure(figsize=(10, 8))
 flights_pivot = flights.pivot("month", "year", "passengers")
 sns.heatmap(flights_pivot, annot=True, fmt="d", cmap="YlOrRd")
