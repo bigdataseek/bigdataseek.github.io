@@ -1,5 +1,5 @@
 ---
-title: 30차시 1:LangChain
+title: 6차시 1:LangChain
 layout: single
 classes: wide
 categories:

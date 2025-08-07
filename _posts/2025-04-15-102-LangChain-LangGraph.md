@@ -1,5 +1,5 @@
 ---
-title: 30차시 2:LangGraph
+title: 6차시 2:LangGraph
 layout: single
 classes: wide
 categories:

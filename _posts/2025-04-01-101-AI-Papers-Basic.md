@@ -1,5 +1,5 @@
 ---
-title: 26차시 1:AI Research Papers(Basic)
+title: 5차시 1:AI Research Papers 1
 layout: single
 classes: wide
 categories:
