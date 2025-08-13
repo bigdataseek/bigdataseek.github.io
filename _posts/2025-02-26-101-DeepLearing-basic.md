@@ -1,5 +1,5 @@
 ---
-title: 3차시 :딥러닝 기초
+title: 3차시 1:딥러닝 기초
 layout: single
 classes: wide
 categories:
