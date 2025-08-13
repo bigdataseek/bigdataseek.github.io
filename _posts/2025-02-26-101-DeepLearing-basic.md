@@ -134,42 +134,45 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
         - XOR 문제는 두 입력값이 같으면 0, 다르면 1을 출력하는 논리 연산입니다. 이를 해결하려면 다층 퍼셉트론(MLP)과 같은 비선형 모델이 필요합니다.
 
 ### **2.2 다층 퍼셉트론(MLP)**
-1. 은닉층의 개념
+1. MLP란?
+    - 퍼셉트론은 출력층만 있는 1계층이고, MLP는 은닉층과 출력층이 있는 2계층이다.
+    - MLP의 핵심 특징
+        - 구조: 입력층(Input Layer) + 1개 이상의 은닉층(Hidden Layer) + 출력층(Output Layer)
+        - 활성화 함수: ReLU, Sigmoid, Tanh 등 비선형 함수를 사용
+        - 용도: 회귀(Regression) 또는 분류(Classification) 문제에 적용
+        - 퍼셉트론의 XOR 문제 해결.
+
+2. 은닉층의 개념
     - **은닉층(Hidden Layer)**:  
         - 입력층과 출력층 사이에 위치하며, 데이터의 복잡한 패턴을 학습하는 역할을 합니다. 은닉층의 뉴런들은 비선형 변환을 통해 데이터를 고차원 공간으로 매핑합니다.
     - **다층 구조의 필요성**:  
         - 단일 퍼셉트론은 XOR 문제와 같은 비선형 문제를 해결할 수 없지만, 은닉층을 추가하면 비선형 문제도 해결할 수 있습니다.
 
-2. 순방향 전파(Forward Propagation)
+3. 순방향 전파(Forward Propagation)
     - **순방향 전파 과정**:  
         1. 입력층에서 데이터를 받아 은닉층으로 전달합니다.
         2. 각 은닉층에서 가중합을 계산하고 활성화 함수를 적용합니다.
         3. 최종 출력층에서 결과를 생성합니다.
     - **수식 표현**:  
-        
-        $$ z^{[l]} = W^{[l]} a^{[l-1]} + b^{[l]} $$
+        $$ z^{[l]} = W^{[l]} a^{[l-1]} + b^{[l]}, $$
         $$ a^{[l]} = f(z^{[l]}) $$
 
         여기서 $$ W^{[l]} $$는 가중치 행렬, $$ b^{[l]} $$는 편향 벡터, $$ f $$는 활성화 함수입니다.
 
-3. 비선형 활성화 함수
+4. 비선형 활성화 함수
     - **Sigmoid**:          
-
         $$ f(x) = \frac{1}{1 + e^{-x}} $$          
 
         - 출력값이 0과 1 사이로 제한되며, 초기 신경망에서 많이 사용되었으나 기울기 소실(vanishing gradient) 문제로 인해 최근에는 덜 사용됩니다.
     - **Tanh**:  
-
         $$ f(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}} $$
 
         - 출력값이 -1과 1 사이로 제한되며, Sigmoid보다 중심화된 출력을 제공합니다.
     - **ReLU(Rectified Linear Unit)**:  
-    
         $$ f(x) = \max(0, x) $$  
     
         - 양수 입력에 대해선 선형이며, 음수 입력에 대해선 0을 출력합니다. 계산이 간단하고 성능이 우수하여 현재 가장 널리 사용됩니다.
     - **Leaky ReLU**:  
-        
         $$ f(x) = \max(0.01x, x) $$  
 
         - 음수 입력에 대해 작은 기울기를 부여하여 ReLU의 "죽은 뉴런" 문제를 완화합니다.
@@ -181,12 +184,10 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
     - **손실 함수의 역할**:  
         - 모델의 예측값과 실제값 사이의 차이를 측정하여 모델의 성능을 평가합니다. 학습 과정에서 손실을 최소화하는 방향으로 가중치를 업데이트합니다.
     - **MSE(Mean Squared Error)**:  
-
         $$ L = \frac{1}{n} \sum_{i=1}^n (y_i - \hat{y}_i)^2 $$  
 
         - 회귀 문제에서 주로 사용되며, 예측값과 실제값의 차이를 제곱한 평균을 계산합니다.
     - **Cross-Entropy Loss**:  
-
         $$ L = -\frac{1}{n} \sum_{i=1}^n \left[ y_i \log(\hat{y}_i) + (1 - y_i) \log(1 - \hat{y}_i) \right] $$  
 
         - 분류 문제에서 주로 사용되며, 확률 분포 간의 차이를 측정합니다.
@@ -194,7 +195,6 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
 2. 경사 하강법(Gradient Descent)
     - **경사 하강법의 원리**:  
         - 손실 함수를 최소화하기 위해 가중치를 반복적으로 업데이트합니다.  
-        
         $$ w := w - \alpha \frac{\partial L}{\partial w} $$  
         
         - 여기서 $$ \alpha $$는 학습률(learning rate)로, 업데이트 크기를 결정합니다.
@@ -302,12 +302,15 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
 ### 4.2 순환 신경망(RNN, Recurrent Neural Network)
 1. **시퀀스 데이터 처리:**
 - RNN은 시간에 따라 변하는 데이터(예: 텍스트, 음성)를 처리하기 위해 설계되었습니다.
+- 시계열 데이터나 순차적 데이터 처리에 적합
 - 이전 상태를 기억하여 현재 입력과 결합하여 출력을 생성합니다.
 
 2. **LSTM(Long Short-Term Memory)과 GRU(Gated Recurrent Unit):**
 - **문제점:** 기본 RNN은 긴 시퀀스 데이터에서 기울기 소실(Vanishing Gradient) 문제가 발생할 수 있습니다.
 - **LSTM:** 게이트(Gate) 메커니즘을 통해 중요한 정보를 장기적으로 유지합니다.
 - **GRU:** LSTM의 간소화된 버전으로, 성능은 유사하지만 계산 비용이 적습니다.
+
+
 
 ### 4.3 트랜스포머(Transformer)
 - **개념:**  
@@ -317,8 +320,10 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
   - 자연어 처리(NLP)에서 혁신적인 성과를 거두었으며, GPT, BERT 등의 모델에 활용됩니다.
 
 
-## 5. MNIST 데이터셋을 이용한 숫자 인식
-### 5.1 데이터 준비
+## 5. 인공신경망(ANN): MLP(Multi-Layer Perceptron)
+- MLP(Multi-Layer Perceptron)는 가장 기본적인 형태의 인공 신경망(ANN)으로, 완전 연결 계층(Fully Connected Layer)만으로 구성된 모델을 말합니다.
+
+### 5.1 데이터 준비(MNIST 손글씨 데이터셋)
 ```python
 # TensorFlow 예시
 import tensorflow as tf
@@ -340,7 +345,7 @@ y_test = tf.keras.utils.to_categorical(y_test, 10)
     1. **데이터 로드**: `mnist.load_data()`를 사용하여 MNIST 데이터셋을 불러옵니다.  
     2. **정규화 (Normalization)**: 입력 이미지 데이터를 `0~255 → 0~1` 범위로 조정하여 신경망 학습을 원활하게 합니다.  
     3. **원-핫 인코딩 (One-Hot Encoding)**: 레이블을 원-핫 벡터로 변환하여 다중 클래스 분류 문제에 적합한 형식으로 변환합니다.
-            - to_categorical(y_train, 10)을 적용하면 각 정수를 길이 10짜리 벡터로 변환.
+        - to_categorical(y_train, 10)을 적용하면 각 정수를 길이 10짜리 벡터로 변환.
 
 ### 5.2 간단한 MLP 모델 구현
 ```python
@@ -615,3 +620,202 @@ plt.show()
     - `np.argmax(predictions[i])`를 사용해 가장 높은 확률을 가진 클래스(예측 결과)를 찾음.  
     - 실제 정답(`y_test`)과 비교하여 제목에 표시.  
 
+## 7. 시퀀스 모델(RNN, LSTM)
+### 7.1 간단한 시퀀스 예측 모델(RNN)
+
+```python
+import torch
+import torch.nn as nn
+import numpy as np
+
+# 하이퍼파라미터 설정
+input_size = 1    # 입력 차원
+hidden_size = 32  # 은닉층 크기
+output_size = 1   # 출력 차원
+sequence_length = 10  # 시퀀스 길이
+learning_rate = 0.01
+epochs = 100
+
+# 간단한 시계열 데이터 생성 (사인 파동)
+data = np.sin(np.linspace(0, 10, 100))
+x = []
+y = []
+for i in range(len(data) - sequence_length):
+    x.append(data[i:i+sequence_length])
+    y.append(data[i+sequence_length])
+x = np.array(x)
+y = np.array(y)
+
+# 텐서로 변환
+x = torch.FloatTensor(x).unsqueeze(2)  # (샘플수, 시퀀스길이, 특성수)
+y = torch.FloatTensor(y).unsqueeze(1)
+
+# RNN 모델 정의
+class SimpleRNN(nn.Module):
+    def __init__(self):
+        super(SimpleRNN, self).__init__()
+        self.rnn = nn.RNN(input_size, hidden_size, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+    
+    def forward(self, x):
+        # RNN의 출력: (배치, 시퀀스, hidden_size), hidden_state
+        out, _ = self.rnn(x)
+        # 마지막 시퀀스의 출력만 사용
+        out = self.fc(out[:, -1, :])
+        return out
+
+model = SimpleRNN()
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+
+# 학습
+for epoch in range(epochs):
+    optimizer.zero_grad()
+    outputs = model(x)
+    loss = criterion(outputs, y)
+    loss.backward()
+    optimizer.step()
+    
+    if (epoch+1) % 10 == 0:
+        print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}')
+
+# 예측
+with torch.no_grad():
+    test_input = data[-sequence_length:].reshape(1, sequence_length, 1)
+    test_input = torch.FloatTensor(test_input)
+    prediction = model(test_input)
+    print(f'실제 값: {data[-1]:.4f}, 예측 값: {prediction.item():.4f}')
+```
+
+- 간단한 설명
+    1. **RNN 구조**:
+    - 입력층 → RNN층 → 출력층으로 구성
+    - RNN은 이전 시간 step의 정보를 hidden state로 저장
+
+    2. **데이터 준비**:
+    - 사인(sin) 함수로 만든 시계열 데이터 사용
+    - 10개의 연속된 값을 입력으로, 다음 값을 예측하는 문제
+
+    3. **학습 과정**:
+    - 순전파(forward): 입력 데이터를 모델에 통과시켜 예측값 얻음
+    - 손실 계산: 예측값과 실제값 비교 (MSE 사용)
+    - 역전파(backward): 오차를 통해 가중치 업데이트
+
+    4. **예측**:
+    - 학습된 모델로 새로운 시퀀스의 다음 값을 예측
+
+### 7.2 간단한 시퀀스 예측 모델 (LSTM)
+
+```python
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+import matplotlib.pyplot as plt
+
+# 하이퍼파라미터 설정
+SEQ_LENGTH = 20  # 시퀀스 길이
+HIDDEN_SIZE = 50  # LSTM 은닉층 크기
+EPOCHS = 50
+BATCH_SIZE = 32
+
+# 데이터 생성 (사인 파동 + 잡음)
+def generate_data(n_samples=1000):
+    x = np.linspace(0, 20, n_samples)
+    y = np.sin(x) + np.random.normal(0, 0.1, size=n_samples)
+    
+    # 입력(X)과 타겟(y) 생성
+    X = []
+    Y = []
+    for i in range(len(y) - SEQ_LENGTH):
+        X.append(y[i:i+SEQ_LENGTH])
+        Y.append(y[i+SEQ_LENGTH])
+    
+    return np.array(X), np.array(Y)
+
+# 데이터 생성
+X, Y = generate_data()
+
+# 데이터 분할 (훈련 80%, 테스트 20%)
+split = int(0.8 * len(X))
+X_train, X_test = X[:split], X[split:]
+y_train, y_test = Y[:split], Y[split:]
+
+# LSTM 모델 구성
+model = Sequential([
+    # Input shape: (batch_size, timesteps, input_dim)
+    LSTM(HIDDEN_SIZE, input_shape=(SEQ_LENGTH, 1)),
+    Dense(1)  # 출력층
+])
+
+model.compile(optimizer='adam',
+              loss='mse',
+              metrics=['mae'])
+
+# 모델 구조 요약
+model.summary()
+
+# 모델 학습
+history = model.fit(
+    X_train[..., np.newaxis],  # (samples, timesteps, features) 형태로 reshape
+    y_train,
+    batch_size=BATCH_SIZE,
+    epochs=EPOCHS,
+    validation_data=(X_test[..., np.newaxis], y_test),
+    verbose=1
+)
+
+# 예측 결과 시각화
+plt.figure(figsize=(12, 6))
+plt.plot(history.history['loss'], label='Train Loss')
+plt.plot(history.history['val_loss'], label='Validation Loss')
+plt.legend()
+plt.title('Training and Validation Loss')
+plt.show()
+
+# 테스트 데이터로 예측
+test_predictions = model.predict(X_test[..., np.newaxis]).flatten()
+
+# 실제값 vs 예측값 비교
+plt.figure(figsize=(12, 6))
+plt.plot(y_test, label='True Values')
+plt.plot(test_predictions, label='Predictions')
+plt.legend()
+plt.title('True vs Predicted Values')
+plt.show()
+```
+
+- 코드 설명
+    1. **데이터 준비**:
+    - 사인(sin) 함수에 약간의 노이즈를 추가한 데이터 생성
+    - 20개의 연속된 값을 입력으로, 다음 1개의 값을 예측하는 문제
+
+    2. **LSTM 모델 구조**:
+    - `Sequential` 모델 사용
+    - 1개의 LSTM 레이어 (은닉 유닛 50개)
+    - 1개의 Dense 출력 레이어 (회귀 문제이므로 활성화 함수 없음)
+
+    3. **모델 컴파일**:
+    - Adam 옵티마이저 사용
+    - 평균 제곱 오차(MSE) 손실 함수 사용
+    - 평균 절대 오차(MAE)를 추가 지표로 측정
+
+    4. **학습 과정**:
+    - 배치 크기 32로 50 epoch 학습
+    - 훈련 데이터와 검증 데이터로 나누어 학습 진행
+
+    5. **결과 시각화**:
+    - 훈련/검증 손실 그래프
+    - 테스트 데이터에 대한 실제값 vs 예측값 비교 그래프
+
+- LSTM의 주요 특징
+    1. **셀 상태(Cell State)**: 정보를 장기간 기억할 수 있는 경로
+    2. **게이트 메커니즘**:
+    - 망각 게이트(Forget Gate): 어떤 정보를 버릴지 결정
+    - 입력 게이트(Input Gate): 어떤 새로운 정보를 저장할지 결정
+    - 출력 게이트(Output Gate): 어떤 정보를 출력할지 결정
+
+    3. **기본 RNN과의 차이점**:
+    - 기울기 소실 문제 완화
+    - 장기적인 의존성 학습 가능
+    - 더 복잡한 구조지만 더 나은 성능
