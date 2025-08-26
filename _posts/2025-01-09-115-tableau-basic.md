@@ -1,5 +1,5 @@
 ---
-title: 1차시 17(빅데이터 분석):Tableau Basic
+title: 1차시 15(빅데이터 분석):Tableau Basic
 layout: single
 classes: wide
 categories:

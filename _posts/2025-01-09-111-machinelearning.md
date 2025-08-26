@@ -1,5 +1,5 @@
 ---
-title: 1차시 12(빅데이터 분석):Machine Learning 1
+title: 1차시 11(빅데이터 분석):Machine Learning 개요
 layout: single
 classes: wide
 categories:

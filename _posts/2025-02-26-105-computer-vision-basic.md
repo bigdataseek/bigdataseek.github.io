@@ -1,5 +1,5 @@
 ---
-title: 1차시 16(빅데이터 분석):Computer Vision Basic
+title: 3차시 5:Computer Vision Basic
 layout: single
 classes: wide
 categories:

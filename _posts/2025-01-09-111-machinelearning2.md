@@ -1,5 +1,5 @@
 ---
-title: 1차시 13(빅데이터 분석):Machine Learning 2
+title: 1차시 11(빅데이터 분석):Machine Learning2 (회귀/분류/앙상블)
 layout: single
 classes: wide
 categories:

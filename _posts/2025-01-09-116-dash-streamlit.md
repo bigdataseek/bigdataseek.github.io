@@ -1,5 +1,5 @@
 ---
-title: 1차시 20(빅데이터 분석):Plotly로 인터랙티브 시각화 + Dash/Streamlit로 웹 앱 만들기
+title: 1차시 16(빅데이터 분석):Plotly로 인터랙티브 시각화 + Dash/Streamlit로 웹 앱 만들기
 layout: single
 classes: wide
 categories:

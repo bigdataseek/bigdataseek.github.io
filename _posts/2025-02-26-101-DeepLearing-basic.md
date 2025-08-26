@@ -114,6 +114,11 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
         - 인공 뉴런은 생물학적 뉴런의 동작을 모방하여 설계되었습니다. 입력값에 가중치를 곱하고, 편향(bias)을 더한 후 활성화 함수를 통해 출력을 결정합니다. 이는 생물학적 뉴런의 시냅스 강도와 발화 여부를 모방한 것입니다.
 
 
+<div style="text-align: center;">
+    <img src="https://ars.els-cdn.com/content/image/3-s2.0-B9780128234884000011-f01-07-9780128234884.jpg" style="background-color: white; padding: 20px;">
+</div >
+
+
 
 2. 단일 퍼셉트론의 구조
     - **입력(Input)**:  
@@ -124,8 +129,8 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
         - 편향은 입력값과 독립적으로 추가되는 상수항으로, 모델의 유연성을 높이는 역할을 합니다.
     - **활성화 함수(Activation Function)**:  
         - 가중합(weighted sum)을 계산한 후, 활성화 함수를 통해 최종 출력을 결정합니다. 활성화 함수는 비선형성을 도입하여 복잡한 문제를 해결할 수 있게 합니다.
-
-        $$ z = \sum_{i=1}^n w_i x_i + b $$ 
+    
+    $ z = \sum_{i=1}^n w_i x_i + b $
 
 3. 선형 분리 가능성과 XOR 문제
     - **선형 분리 가능성**:  

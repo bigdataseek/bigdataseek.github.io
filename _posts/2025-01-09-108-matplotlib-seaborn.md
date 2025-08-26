@@ -1,5 +1,5 @@
 ---
-title: 1차시 8(빅데이터 분석):Matplotlib/Seaborn
+title: 1차시 8(빅데이터 분석):Matplotlib/Seaborn 개요
 layout: single
 classes: wide
 categories:
@@ -9,11 +9,11 @@ toc: true # 이 포스트에서 목차를 활성화
 toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
 ---
 
-## 16. Matplotlib이란?
+## 1. Matplotlib이란?
 
 Matplotlib은 Python에서 가장 널리 사용되는 데이터 시각화 패키지입니다. 데이터 과학 및 머신러닝에서 데이터 탐색, 전처리, 모델 훈련 및 평가 등 다양한 단계에서 중요하게 사용됩니다.
 
-### 16.1 설치 및 기본 설정
+### 1.1 설치 및 기본 설정
 
 ```python
 # 설치
@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 ```
 
-### 16.2 주요 플롯 유형 및 예제
+### 1.2 주요 플롯 유형 및 예제
 
 **1. 선 그래프 (Line Chart)**
 
@@ -190,7 +190,7 @@ plt.show()
 
 ```
 
-### 16.3 여러 플롯 그리기
+### 1.3 여러 플롯 그리기
 
 **1. 서브플롯 (Subplots)**
 
@@ -247,7 +247,7 @@ ax.legend()                        # 범례
 plt.show()
 ```
 
-### 16.4 스타일링 및 사용자 정의
+### 1.4 스타일링 및 사용자 정의
 
 **1. 스타일 시트 사용**
 
@@ -291,7 +291,7 @@ plt.ylim(-2, 2)  # y축 범위 제한
 plt.show()
 ```
 
-### 16.5 플롯 저장
+### 1.5 플롯 저장
 
 ```python
 x = np.linspace(0, 10, 100)
@@ -307,7 +307,7 @@ plt.savefig('sin_function.png', dpi=300, bbox_inches='tight', transparent=True)
 plt.show()
 ```
 
-### 16.6 3D 플로팅 예제
+### 1.6 3D 플로팅 예제
 
 ```python
 from mpl_toolkits.mplot3d import Axes3D
@@ -344,9 +344,9 @@ ax.set_title('3D 표면 플롯')
 plt.show()
 ```
 
-## 17. Seaborn 기본 가이드 및 예제
+## 2. Seaborn 기본 가이드 및 예제
 
-### 17.1 Seaborn이란?
+### 2.1 Seaborn이란?
 
 Seaborn은 Matplotlib을 기반으로 한 Python의 통계 데이터 시각화 라이브러리입니다. Matplotlib보다 더 아름답고 통계적으로 유용한 시각화를 간단한 코드로 만들 수 있습니다.
 
@@ -390,7 +390,7 @@ Seaborn은 Matplotlib을 기반으로 한 Python의 통계 데이터 시각화 �
      ```
 
 
-### 17.2 설치 및 기본 설정
+### 2.2 설치 및 기본 설정
 
 ```python
 # 설치
@@ -406,7 +406,7 @@ import numpy as np
 sns.set_theme()  # 또는 sns.set_style("whitegrid")
 ```
 
-### 17.3 기본 플롯 유형 및 예제
+### 2.3 기본 플롯 유형 및 예제
 ### Seaborn의 기본적인 플롯 유형
 
 1.  **분포 플롯 (Distribution Plots)**: 단일 변수의 데이터 분포를 보여줍니다.
@@ -439,7 +439,7 @@ sns.set_theme()  # 또는 sns.set_style("whitegrid")
         ```python
         # print(tips.head()) 결과
                 total_bill   tip     sex smoker  day    time  size
-        0       16.99  1.01  Female     No  Sun  Dinner     2
+        0       1.99  1.01  Female     No  Sun  Dinner     2
         1       10.34  1.66    Male     No  Sun  Dinner     3
         2       21.01  3.50    Male     No  Sun  Dinner     3
         3       23.68  3.31    Male     No  Sun  Dinner     2
@@ -596,7 +596,7 @@ sns.set_theme()  # 또는 sns.set_style("whitegrid")
 
     ```
 
-### 17.4 고급 시각화 예제
+### 2.4 고급 시각화 예제
 
 **1. Facet Grid를 이용한 다중 플롯**
 *  하나의 그래프를 여러 개의 작은 그래프(패싯)로 분할하여 보여주는 그리드
@@ -643,7 +643,7 @@ plt.show()
 ```
 
 
-### 17.5 실무 활용 예제
+### 2.5 실무 활용 예제
 
 **1. 시계열 데이터 시각화**
 
@@ -748,7 +748,7 @@ plt.show()
 ```
 
 
-### 17.6 주요 팁과 모범 사례
+### 2.6 주요 팁과 모범 사례
 
 ```python
 # 1. 데이터 전처리와 함께 사용

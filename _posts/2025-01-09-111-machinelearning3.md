@@ -1,5 +1,5 @@
 ---
-title: 1차시 14(빅데이터 분석):Casino Analysis
+title: 1차시 11(빅데이터 분석):Machine Learning 3(실습 예제)
 layout: single
 classes: wide
 categories:

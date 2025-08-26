@@ -1,5 +1,5 @@
 ---
-title: 1차시 18(빅데이터 분석):R Programming Basic 1
+title: 7차시 6:R Programming Basic 1
 layout: single
 classes: wide
 categories:
