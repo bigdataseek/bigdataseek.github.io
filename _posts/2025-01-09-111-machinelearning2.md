@@ -219,7 +219,7 @@ print("예측 클래스:", model.predict([[5, 6]]))
 **핵심 개념**:  
 데이터를 최대 마진으로 분리하는 초평면(hyperplane)을 찾습니다.SVR(회귀)과 SVC(분류)이 있음
 
-**샘플 예제**:
+**선형 커널**:
 ```python
 from sklearn.svm import SVC
 
@@ -228,7 +228,7 @@ X = np.array([[1, 2], [2, 3], [3, 4], [6, 7], [7, 8]])
 y = np.array([0, 0, 0, 1, 1])
 
 # 모델 학습
-model = SVC(kernel='linear')
+model = SVC(kernel='linear') #기본 커널은 'rbf'(Radial Basis Function)
 model.fit(X, y)
 
 # 예측
@@ -236,7 +236,7 @@ print("예측 클래스:", model.predict([[5, 6]]))
 ```
 
 
-### **2.4 Kernel SVM**
+### **2.4 RBF 커널**
 **핵심 개념**:  
 비선형 데이터를 고차원 공간으로 매핑하여 선형 분리가 가능하도록 합니다.
 
@@ -249,7 +249,7 @@ X = np.array([[1, 2], [2, 3], [3, 4], [6, 7], [7, 8]])
 y = np.array([0, 0, 0, 1, 1])
 
 # 모델 학습
-# RBF 커널 사용,Radial Basis Function 커널 (가우시안 커널이라고도 함)
+# RBF 커널 사용,Radial Basis Function 커널 :가우시안(정규분포) 커널이라고도 함
 model = SVC(kernel='rbf')  
 model.fit(X, y)
 
@@ -538,7 +538,8 @@ plt.show()
 ```
 
 **3. Linear Discriminant Analysis (LDA)**
--   클래스 간 분산을 최대화하고 클래스 내 분산을 최소화하여 차원을 줄이는 기법입니다. 지도학습
+- 지도학습
+-   클래스 간 분산을 최대화하고 클래스 내 분산을 최소화하여 차원을 줄이는 기법입니다. 
 
 ```python
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
@@ -550,7 +551,7 @@ y = [0, 0, 1, 1, 0, 1]
 
 # LDA 적용
 lda = LDA(n_components=1)
-X_reduced = lda.fit_transform(X, y)
+X_reduced = lda.fit_transform(X, y) #지도 학습이라 y값 필요
 
 # 시각화
 plt.scatter(X_reduced, [0] * len(X_reduced), c=y, cmap='viridis')

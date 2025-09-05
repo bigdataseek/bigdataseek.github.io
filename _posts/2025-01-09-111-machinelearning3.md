@@ -135,7 +135,7 @@ retention_.head(3)
 ### 1.6 고객별 총 소비 금액 및 변동성 계산
 ```python
 overall_spent = casino.groupby("customer").agg({'amount': ['sum', 'std']}).reset_index()
-overall_spent.columns = overall_spent.columns.droplevel(0)
+overall_spent.columns = overall_spent.columns.droplevel(0) #멀티레벨 컬럼에서 첫 번째 레벨(레벨 0)을 제거
 overall_spent.rename(columns={"": "customer"}, inplace=True)
 overall_spent.head(3)
 ```
@@ -179,12 +179,13 @@ retention_= retention_.set_index("customer")
 
 ### 1.9 고객 데이터 통합
 ```python
-customer_data = overall_spent.join([monthly_average_spent, retention_]).reset_index()
+customer_data = overall_spent.join([monthly_average_spent, retention_]).reset_index() 
+# join() 메서드는 기본적으로 인덱스를 키(Key)로 사용
 customer_data
 ```
 
   
-이 코드는 이전에 만든 데이터프레임(`overall_spent`, `monthly_average_spent`, `retention_`)을 하나로 합칩니다.  
+이 코드는 이전에 만든 데이터프레임(`overall_spent`, `monthly_average_spent`, `retention_`)을 하나로 결합.  
 - `join`: 고객 ID를 기준으로 데이터를 결합합니다.  
 - `reset_index`: 합친 후 인덱스를 초기화하여 `customer` 열을 다시 일반 열로 만든다.  
 - 결과적으로 각 고객의 특징(총 소비, 변동성, 월평균 소비, 활동 기간, 구매 횟수)이 포함된 `customer_data` 데이터프레임이 생성됩니다.
@@ -194,7 +195,7 @@ customer_data
 customer_data.isna().sum()
 # Fill with 0
 customer_data.loc[customer_data["std"].isna(), "std"] = 0.001
-customer_data.loc[customer_data["std"] == 0] = 0.001
+customer_data.loc[customer_data["std"] == 0, "std"] = 0.001
 customer_data
 ```
 
@@ -280,11 +281,13 @@ for i in [2, 3, 4, 5, 6,7,8,9]:
    - `SilhouetteVisualizer`: 각 클러스터의 실루엣 점수를 시각화합니다.  
    - 실루엣 점수는 클러스터링의 품질을 평가하며, 값이 높을수록 클러스터가 잘 형성된 것입니다.  
 3. 각 그래프는 클러스터 수(2~9)에 따른 실루엣 점수 분포를 보여줍니다.
+4. 스코어가 약간 낮더라도 해석력 + 데이터 특성과 맞으면 선택 가능
 
 ### 1.15 최종 클러스터링 및 실루엣 점수 계산
 ```python
 cluster_model = KMeans(n_clusters=3)
 kmeans = cluster_model.fit(X_std)
+# kmeans.labels_는 KMeans가 학습한 후 각 데이터 포인트가 속한 클러스터 번호.(넘파이 배열)
 silhouette_score(X_std, labels = kmeans.labels_)
 ```
 
@@ -474,7 +477,11 @@ for customer in customer_ids:
     customer_df.day.max(),
     freq = "D")
     customer_df = customer_df.set_index(keys = "day").copy()
+    
     customer_df = customer_df.reindex(list(customer_full_date_range), fill_value=0)
+    # reindex: DataFrame(또는 Series)의 인덱스를 새로운 인덱스 집합으로 맞추는 기능.
+    #새로 추가된 인덱스(즉, 기존 DataFrame에는 없었던 날짜)에 대해 결측값이 생기는데, 그걸 0으로 채움
+    # reindex()는 숫자형이 아닌 데이터에 fill_value=0를 적용할 수 없어 NaN 값으로 채우게 됩니다.
     customer_df["customer"] = [customer]*len(customer_df)
     customer_df = customer_df.reset_index()
 
@@ -513,26 +520,26 @@ for customer in customer_ids:
         # Base
         feat_x1_x14 = customer_df.nr_trans[x1:x14].values.tolist()
         trans_next_3_days = np.count_nonzero(customer_df.nr_trans[x14:y])
-        # response = [1 if trans_next_3_days!=0 else 0][0]
-        response = [0 if trans_next_3_days!=0 else 1][0]
+        response = [1 if trans_next_3_days!=0 else 0][0]
+      #   response = [0 if trans_next_3_days!=0 else 1][0]
         responses.append(response)
 
         # Additional features
-        ## -- Nr of days with money deposits in the last 14 days
+        ## -- 지난 14일 동안 입금한 일수 
         x15 = np.count_nonzero(customer_df.nr_trans[x1:x14])
         ## -- Nr of days with money deposits in the last 7 days
         x16 = np.count_nonzero(customer_df.nr_trans[x1+7:x14])
         ## -- Nr of days with money deposits in the last 3 days
         x17 = np.count_nonzero(customer_df.nr_trans[x14-2:x14+1])
 
-        # Average number of deposits in the last 14 days
+         # 지난 14일 동안의 평균 입금 수
         x18 = customer_df.nr_trans[x1:x14].mean().tolist()
-        # Max number of daily deposits in the last 14 days
+        # 지난 14일 동안의 일일 최대 입금 횟수
         x19 = customer_df.nr_trans[x1:x14].max().tolist()
 
-        # Amount deposited in the last 7 days
+        # 지난 7일간 입금된 금액
         x20 = customer_df.daily_amount[x1+7:x14].sum().tolist()
-        # Average Daily Amount deposited in the last 7 days
+        # 지난 7일간 입금된 평균 일일 금액
         x21 = customer_df.daily_amount[x1+7:x14].mean().tolist()
 
         feat_x1_x14.extend([x15, x16, x17, x18, x19, x20, x21, customer])
@@ -607,8 +614,8 @@ ml_df.response = le.fit_transform(ml_df.response)
 ### 2.11 클래스 균형 확인
 
 ```python
-Counter(ml_df.response)
-balanced_df = ml_df
+print(Counter(ml_df.response))
+balanced_df = ml_df.copy()
 ```
 
   
@@ -622,7 +629,8 @@ balanced_df = ml_df
 
 ```python
 split_df = balanced_df.iloc[:,[21, 22]].groupby(21).count().reset_index()
-test_customers = list(split_df.sample(frac=0.2)[21])
+# "balanced_df에서 21번째와 22번째 컬럼을 선택하고, 선택된 DataFrame에서 이름이 '21'인 컬럼으로 그룹화하여 개수를 센다"
+test_customers = list(split_df.sample(frac=0.2)[21])# 열 이름이 숫자로 되어 있음
 test_customers[0:3]
 ```
 

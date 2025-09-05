@@ -135,6 +135,11 @@ from sklearn.metrics import accuracy_score, confusion_matrix
 iris = load_iris()
 X, y = iris.data, iris.target
 
+print(f"X.shape(): {X.shape}, y.shape(): {y.shape}")
+print(f"X.head() : \n {X[:10]}")
+print(f"feature_names: \n{iris.feature_names}")
+print(f"target_name: \n{iris.target_names}")
+
 # 데이터 분할
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -179,7 +184,7 @@ plt.show()
 
 ## **1. Estimator Basics (모델 학습 및 예측)**
 - **핵심 개념**: 
-  - Scikit-learn의 모든 모델은 `Estimator` 객체로 구현됩니다.
+  - Scikit-learn의 모든 모델은 `Estimator` 객체로 구현됩니다.(추정기)
   - `fit()` 메서드를 사용해 데이터에 모델을 학습시키고, `predict()` 메서드로 새로운 데이터를 예측합니다.
 - **예제 코드**:
   ```python
@@ -247,6 +252,7 @@ plt.show()
   - 범주형 데이터 : 원-핫 인코딩(One-Hot Encoding)이나 레이블 인코딩(Label Encoding)이 필요.
   - 텍스트 데이터 : 토큰화(Tokenization), 벡터화(Vectorization) 등이 필요.
 - 서로 다른 특성에 대해 다른 전처리를 적용하려면 `ColumnTransformer`를 사용합니다.
+
   ```python
   import pandas as pd
   from sklearn.compose import ColumnTransformer
@@ -266,6 +272,7 @@ plt.show()
   y = df['city']              # 타겟 데이터
 
   # ColumnTransformer 정의
+  # ColumnTransformer는 서로 다른 유형의 피처(수치형, 범주형 등)에 대해 각기 다른 전처리 방법을 적용할 수 있도록 해줍니
   preprocessor = ColumnTransformer( #각 튜플은 (이름, 변환기, 적용할 컬럼)으로 정의
       transformers=[
           ('num', StandardScaler(), ['age', 'salary']),  # 수치형 데이터: 표준화
@@ -274,6 +281,11 @@ plt.show()
   )
 
   # 파이프라인 생성
+  # Pipeline은 전처리 단계(예: StandardScaler, OneHotEncoder)와 모델 학습(예: LogisticRegression)을 하나의 객체로 통합
+  # Pipeline은 학습 데이터와 테스트 데이터에 대해 전처리 과정을 동일하게 적용하므로, 데이터 누수(data leakage)를 방지
+  # Pipeline을 사용하면 전처리와 모델 파라미터를 함께 GridSearchCV나 RandomizedSearchCV로 튜닝
+  # 학습된 Pipeline 객체는 전처리와 모델을 하나로 묶어 저장할 수 있어, 프로덕션 환경에서 예측 시 전처리 과정을 별도로 관리할 필요가 없습니다. 예를 들어, joblib로 저장 후 바로 배포 가능
+
   pipeline = Pipeline(steps=[
       ('preprocessor', preprocessor),
       ('classifier', LogisticRegression())
@@ -307,7 +319,7 @@ plt.show()
 
     pipe = make_pipeline(StandardScaler(), LogisticRegression())
     X, y = load_iris(return_X_y=True)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=0) #default로 test_size=0.25
     pipe.fit(X_train, y_train)  # 파이프라인 학습
     print(accuracy_score(pipe.predict(X_test), y_test))  # 정확도 평가
     ```
@@ -367,7 +379,10 @@ plt.show()
   from sklearn.linear_model import LinearRegression
   from sklearn.model_selection import cross_validate
 
-  X, y = make_regression(n_samples=1000, random_state=0)
+  X, y = make_regression(n_samples=1000, random_state=0) 
+  # X는 독립변수로 100개의 feature를 갖는다,2D 배열 형태
+  # y는 종속변수로 1D 배열 형태
+
   lr = LinearRegression()
   result = cross_validate(lr, X, y)  # 5-fold 교차 검증
   print(result['test_score'])  # 각 폴드의 점수 출력
@@ -377,6 +392,10 @@ plt.show()
   - `cross_validate()`은 기본값이 5-fold
   - 교차 검증은 데이터를 여러 개의 폴드로 나누고, 각 폴드를 번갈아가며 테스트 세트로 사용합니다.
   - 이를 통해 모델의 안정성을 평가할 수 있습니다.
+  - 회귀 모델의 경우, scoring 파라미터가 지정되지 않으면 기본적으로 R² 점수 (결정 계수, coefficient of determination)
+  - train_test_split을 하지 않은 이유:
+    - train_test_split은 데이터를 한 번만 나누므로, 특정 분할에 따라 모델 성능이 달라질 수 있습니다(데이터 분포의 편향 가능성).
+    - 반면, 교차 검증은 데이터를 여러 폴드로 나누어 평가하므로, 모델의 일반화 성능(새로운 데이터에 대한 성능)을 더 안정적으로 측정할 수 있습니다.
 
 
 ## **5. Automatic Parameter Searches (자동 하이퍼파라미터 탐색)**
@@ -384,19 +403,21 @@ plt.show()
   - 데이터 전처리 → 모델 학습 → 모델 평가 → 하이퍼파라미터 튜닝.
   - 모델의 성능은 하이퍼파라미터에 크게 의존합니다.
   - Scikit-learn은 자동으로 최적의 하이퍼파라미터를 찾는 도구를 제공합니다.
-  - **예제 코드**:
+  - **RandomizedSearchCV**:
     ```python
     from sklearn.model_selection import RandomizedSearchCV
     from sklearn.ensemble import RandomForestRegressor
     from scipy.stats import randint
 
     param_distributions = {'n_estimators': randint(1, 5), 'max_depth': randint(5, 10)}
+    #randint()는 분포 객체로, 동적으로 무작위 샘플링을 수행하며 RandomizedSearchCV와 자연스럽게 호환.
     search = RandomizedSearchCV(estimator=RandomForestRegressor(random_state=0),
                                 n_iter=5,
                                 param_distributions=param_distributions,
                                 random_state=0)
     search.fit(X_train, y_train)  # 최적 파라미터 탐색
     print(search.best_params_)  # 최적 파라미터 출력
+    # max_depth=9와 n_estimators=4가 가장 높은 교차 검증 R² 점수를 기록.
     print(search.score(X_test, y_test))  # 테스트 데이터 점수
     ```
   - **설명 포인트**:
@@ -434,6 +455,7 @@ plt.show()
 
   # 최적의 파라미터와 점수 출력
   print("Best Parameters:", grid_search.best_params_)
+  # Best Parameters: {'max_depth': None, 'n_estimators': 100}
   print("Best Score:", grid_search.best_score_)
   ```
 

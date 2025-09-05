@@ -89,8 +89,8 @@ plt.title('GrLivArea vs SalePrice')
 plt.show()
 
 # 이상치 제거
-# 'GrLivArea'가 4000 이상이고 'SalePrice'가 300000 이하인 데이터 포인트 제거
-train = train.drop(train[(train['GrLivArea'] > 4000) & (train['SalePrice'] < 300000)].index)
+# 'GrLivArea'가 4000 이상이거나 'SalePrice'가 600000 이상인 데이터 포인트 제거
+train = train.drop(train[(train['GrLivArea'] > 4000) | (train['SalePrice'] > 600000)].index)
 
 # 재시각화하여 이상치 제거 확인
 plt.figure(figsize=(8, 6))
@@ -148,10 +148,12 @@ def create_messy_ecommerce_data():
     df = pd.DataFrame(data)
     
     # 인위적으로 문제 있는 데이터 생성
+    # 0과 1 사이의 균일분포에서 n_records개의 무작위 숫자를 생성
     df.loc[np.random.random(n_records) < 0.12, 'customer_age'] = np.nan
     df.loc[np.random.random(n_records) < 0.15, 'customer_income'] = np.nan
     df.loc[np.random.random(n_records) < 0.08, 'customer_rating'] = np.nan
     df.loc[np.random.random(n_records) < 0.05, 'shipping_cost'] = np.nan
+    # 무작위로 선택된 50개의 행에서 가격(price) 값을 1000에서 5000 사이의 무작위 값으로 덮어쓰는 것
     df.loc[np.random.choice(df.index, 50, replace=False), 'price'] = np.random.uniform(1000, 5000, 50)
     df.loc[np.random.choice(df.index, 30, replace=False), 'quantity'] = np.random.randint(20, 100, 30)
     df['customer_age'] = df['customer_age'].astype('object')
@@ -202,17 +204,19 @@ print("-" * 50)
 ```
 
 ### 2.4 결측치 처리하기 (Imputation)
+
 ```python
 # 결측치는 평균, 중앙값, 최빈값 등으로 채울 수 있습니다.
 # 여기서는 숫자는 중앙값으로, 평점은 3(보통)으로 채웁니다.
 print("=== 4단계: 결측치 채우기 ===")
 # 나이, 소득, 배송비의 결측치를 중앙값으로 채웁니다.
-messy_data['customer_age'].fillna(messy_data['customer_age'].median(), inplace=True)
-messy_data['customer_income'].fillna(messy_data['customer_income'].median(), inplace=True)
-messy_data['shipping_cost'].fillna(messy_data['shipping_cost'].median(), inplace=True)
+messy_data.fillna({'customer_age':data['customer_age'].median()}, inplace=True)
+messy_data.fillna({'customer_income':data['customer_income'].median()}, inplace=True)
+messy_data.fillna({'shipping_cost':data['shipping_cost'].median()}, inplace=True)
+
 
 # 고객 평점의 결측치는 '보통'을 의미하는 3으로 채웁니다.
-messy_data['customer_rating'].fillna(3, inplace=True)
+messy_data.fillna({'customer_rating':3}, inplace=True)
 
 print("결측치 처리 후 결측치 수:")
 print(messy_data.isnull().sum())

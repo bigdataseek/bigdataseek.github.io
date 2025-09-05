@@ -47,6 +47,7 @@ plt.title('스타일링된 매출 추이')
 plt.xlabel('년도')
 plt.ylabel('매출 (만원)')
 plt.grid(True)  # 격자 추가
+plt.xticks(years)  # 명시적으로 정수 눈금 설정
 plt.show()
 ```
 
@@ -108,7 +109,7 @@ data1 = np.random.normal(100, 10, 200)
 data2 = np.random.normal(110, 15, 200)
 data3 = np.random.normal(95, 8, 200)
 
-plt.boxplot([data1, data2, data3], labels=['그룹 A', '그룹 B', '그룹 C'])
+plt.boxplot([data1, data2, data3], tick_labels=['그룹 A', '그룹 B', '그룹 C'])
 plt.title('그룹별 성적 분포')
 plt.ylabel('점수')
 plt.show()
@@ -130,7 +131,7 @@ plt.ylabel('Y 값')
 plt.show()
 
 # 스타일링된 산점도
-x = np.random.randn(100)
+x = np.random.randn(100) # 평균 0, 표준편차 1:의 정규분포를 따르는 무작위 실수 100개
 y = np.random.randn(100)
 
 plt.scatter(x, y, color='red', marker='*', s=50, alpha=0.7)
@@ -408,6 +409,7 @@ sns.set_theme()  # 또는 sns.set_style("whitegrid")
 
 ### 2.3 기본 플롯 유형 및 예제
 ### Seaborn의 기본적인 플롯 유형
+- Seaborn 플롯 함수(sns.lineplot(), sns.lmplot() 등)를 호출하면 함수 내부에서 자동으로 현재의 Figure와 Axes를 확인하고, 필요한 경우 새로운 Figure와 Axes를 생성하는 로직이 실행(plt.plot()은 '추가' 개념이라면, sns.lineplot()은 '초기화후 새로 생성'하는 개념)
 
 1.  **분포 플롯 (Distribution Plots)**: 단일 변수의 데이터 분포를 보여줍니다.
 
@@ -589,11 +591,20 @@ sns.set_theme()  # 또는 sns.set_style("whitegrid")
     # DataFrame의 .corr() 메서드를 사용하여 각 수치형 특성 간의 피어슨 상관 계수를 계산합니다. 
     # 이 결과는 상관 관계 행렬(DataFrame)이 됩니다
     # 히트맵은 2D 행렬 형태의 데이터만 입력 가능하므로,
+
     correlation_matrix = iris.select_dtypes(include=[np.number]).corr()
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', center=0)
     plt.title('붓꽃 데이터 상관관계')
     plt.show()
 
+    ```
+    ```bash
+    corr():상관관계 행렬은 다음과 같다.
+                      sepal_length  sepal_width  petal_length  petal_width
+        sepal_length      1.000000    -0.117570      0.871754     0.817941
+        sepal_width      -0.117570     1.000000     -0.428440    -0.366126
+        petal_length      0.871754    -0.428440      1.000000     0.962865
+        petal_width       0.817941    -0.366126      0.962865     1.000000
     ```
 
 ### 2.4 고급 시각화 예제
@@ -627,6 +638,8 @@ plt.show()
 
 **3. 클러스터맵**
 *   계층적 클러스터링이 적용된 히트맵
+* 덴드로그램은 클러스터맵의 데이터를 어떤 기준으로 묶었는지 시각적으로 보여주는 역할을 해요. 덴드로그램의 가지들이 서로 병합되는 모습을 통해 어떤 데이터가 서로 유사하고, 어떤 데이터가 서로 다른지를 한눈에 파악
+  - 덴드로그램은 단순히 색상을 표시하는 것을 넘어, 데이터가 어떤 기준으로 자동으로 분류되고 그룹화되었는지에 대한 정보를 제공
 *   좌측 덴드로그램 (행 덴드로그램): 행(데이터 샘플)의 유사성에 기반한 계층적 클러스터링 결과를 제시
 *   상단 덴드로그램 (열 덴드로그램): 열(변수)의 유사성에 기반한 계층적 클러스터링 결과를 제시
 
@@ -637,7 +650,6 @@ flights = sns.load_dataset("flights")
 # pivot함수(인덱스, 컬럼, 셀 값)
 flights_pivot = flights.pivot(index="month",columns= "year", values="passengers")
 
-plt.figure(figsize=(10, 8))
 sns.clustermap(flights_pivot, cmap="YlOrRd", linewidth=0.5)
 plt.show()
 ```
@@ -659,7 +671,7 @@ plt.show()
 # 히트맵으로 시계열 패턴 보기
 # 히트맵은 2D 행렬 형태의 데이터만 입력 가능하므로,
 plt.figure(figsize=(10, 8))
-flights_pivot = flights.pivot("month", "year", "passengers")
+flights_pivot = flights.pivot(index='month',columns= 'year',values='passengers')
 sns.heatmap(flights_pivot, annot=True, fmt="d", cmap="YlOrRd")
 plt.title('연도-월별 항공 승객 수')
 plt.show()
@@ -766,6 +778,7 @@ plt.show()
 # 그리드 기반 플롯(catplot, relplot 등)은 FacetGrid나 JointGrid 같은 별도의 객체를 반환합니다.
 
 plt.figure(figsize=(8, 6))
+# barplot의 기본 estimator가  mean(평균)
 ax = sns.barplot(data=tips, x="day", y="total_bill", estimator=np.mean, errorbar=('ci',95))
 plt.title('요일별 평균 계산서 (95% 신뢰구간)')
 

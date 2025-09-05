@@ -79,8 +79,12 @@ df.loc[missing_indices_income, 'income'] = np.nan
 df.loc[missing_indices_purchase, 'purchase_amount'] = np.nan
 
 # 결측치 현황 파악
-print("결측치 현황:")
+print("각 컬럼별 결측값 개수 확인  :")
 print(df.isnull().sum())
+
+print("\n각 행별 결측값 개수 확인: ")
+print(df.isnull().sum(axis=1).value_counts())
+
 print(f"\n전체 결측치 비율: {df.isnull().sum().sum() / (df.shape[0] * df.shape[1]) * 100:.2f}%")
 
 # 결측치 패턴 시각화
@@ -119,17 +123,18 @@ df_knn_imputed[numeric_cols] = knn_imputer.fit_transform(df[numeric_cols])
     - 단점: 경직적인 기준
 
     2. **Z-Score 방법**
-    - |Z-score| > 2 또는 3인 값
+    - \|Z-score\| > 2 또는 3인 값
     - 가정: 데이터가 정규분포를 따름
     - 공식: Z = (X - μ) / σ
 
-    3. **Modified Z-Score**
+    <!-- 3. **Modified Z-Score**
     - 중위수와 MAD(Median Absolute Deviation) 사용
-    - 이상치에 더 강건함
+    - 이상치에 더 강건함 -->
 
 ### 2.2 실습 예제: 전자상거래 거래 데이터
 
 ```python
+# scipy.stats는 통계적 분석, 확률 분포 모델링, 가설 검정, 데이터 시뮬레이션을 위한 도구
 from scipy import stats
 import warnings
 warnings.filterwarnings('ignore')
@@ -198,6 +203,7 @@ plt.show()
 df_no_outliers = df_transactions[~outliers_iqr]
 
 # 방법 2: 변환 (로그 변환)
+# log1p 함수는 입력값에 1을 더한 후 자연로그(밑이 $e$)를 계산합니다. log(1 + x)
 df_log_transformed = df_transactions.copy()
 df_log_transformed['log_amount'] = np.log1p(df_transactions['amount'])
 
@@ -209,7 +215,7 @@ IQR = Q3 - Q1
 lower_bound = Q1 - 1.5 * IQR
 upper_bound = Q3 + 1.5 * IQR
 
-df_capped['amount'] = df_capped['amount'].clip(lower=lower_bound, upper=upper_bound)
+df_capped['amount'] = df_capped['amount'].clip(lower=lower_bound, upper=upper_bound) #lower,upper는 inclusive
 
 print(f"원본 데이터 통계:")
 print(df_transactions['amount'].describe())
@@ -240,6 +246,12 @@ print(df_capped['amount'].describe())
     - 정규분포 가정
 
 ### 3.2 실습 예제: 다양한 타입의 고객 데이터
+*   정규화와 표준화는 데이터의 스케일을 조정해 모델 성능을 향상시키고, 분석의 안정성과 일관성을 높이는 데 목적
+    * 변수 간 스케일 차이 제거
+    * 모델 학습 최적화
+    * 이상치 영향 완화 : Min-Max 정규화는 이상치에 민감하지만, 사전에 이상치 처리를 하면 효과적
+    * 통계적 가정 충족 : 선형 회귀, PCA 등은 데이터가 정규분포를 따르거나 평균 0, 표준편차 1인 분포를 가정
+    * 모델 성능 향상
 
 ```python
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
@@ -275,7 +287,7 @@ df_converted['days_since_registration'] = (pd.Timestamp.now() - df_converted['re
 df_converted['registration_year'] = df_converted['registration_date'].dt.year
 df_converted['registration_month'] = df_converted['registration_date'].dt.month
 
-# 범주형 데이터 순서 설정
+# 범주형 데이터 순서 설정(<=> 수치형)
 age_order = ['18-25', '26-35', '36-45', '46-55', '55+']
 satisfaction_order = ['매우불만', '불만', '보통', '만족', '매우만족']
 spending_order = ['Low', 'Medium', 'High']
@@ -291,15 +303,17 @@ print("\n변환 후 데이터 타입:")
 print(df_converted.dtypes)
 
 # 2. 범주형 데이터 인코딩
-# One-Hot Encoding
+# One-Hot Encoding(순서가 없는 경우, 각 카테고리를 독립적인 이진 열(binary column)로 변환)
 df_encoded = pd.get_dummies(df_converted, columns=['age_group', 'spending_category'], prefix=['age', 'spending'])
 
-# Label Encoding (순서가 있는 범주형)
+# Label Encoding (순서가 있는 범주형,각 카테고리에 0부터 시작하는 정수를 할당)
 le = LabelEncoder()
 df_encoded['satisfaction_encoded'] = le.fit_transform(df_converted['satisfaction'])
 
 # 3. 수치형 데이터 정규화
 numeric_columns = ['income', 'credit_score', 'num_purchases', 'days_since_registration']
+
+# Min_Max 정규화나 표준화, 둘 중의 하나를 선택하여 사용하는 것이 일반적
 
 # Min-Max 정규화
 scaler_minmax = MinMaxScaler()
