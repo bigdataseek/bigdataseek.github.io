@@ -31,7 +31,10 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
     [슈퍼스토어-샘플 엑셀파일 다운받기](https://public.tableau.com/app/learn/sample-data)
 
    - **연결 패널**의 Microsoft Excel에서 **sample_-_superstore** 파일 선택.   
+   - 파일 선택 후 표시되는 화면의 좌측에서 Orders와 Returns를 우측으로 끌어모아 데이터 모델을 만든다.
+   - 워크시트로 이동하라는 팝업이 아래부분에 표시되는데, 시트1을 클릭하여 워크시트로 이동.
    - 이 데이터를 활용하여 회사 내 개선이 필요한 주요 영역을 식별할 수 있음.
+   
 
 4. **핵심 학습 내용**
 - Tableau Desktop 시작 : 시작 페이지에서 데이터 연결 및 리소스 탐색.
@@ -111,6 +114,7 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
 
 2. **맵 뷰 작성**:
    - Tableau에서 `State` 필드를 두 번 클릭하면 자동으로 지리적 데이터가 인식되어 맵 뷰가 생성됩니다.
+        - 상단 메뉴바의 맵 > 위치 편집에서 미국 선택해야 데이터가 정상 표시됨.
    - 기본적으로 미국 48개 주(알래스카와 하와이 제외)에 대한 데이터가 표시되며, 위도와 경도 필드가 자동 또는 수동으로 추가됩니다.
    - Region 필드를 사용하여 South 지역만 필터링한 후 해당 지역의 11개 주에 대한 데이터를 분석합니다.
 
@@ -602,12 +606,12 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
     - **단계**:
         1. 새로운 시트 생성.
         2. "Month(Order Date)"를 Columns에, "Sales"를 Rows에 추가 → 월별 매출 라인그래프 생성.
-        3. "Create Calculated Field" 클릭 → 이름: "Cumulative Sales Above 50000".
+        3. "Create Calculated Field" 클릭 → 이름: "Cumulative Sales Above 500000".
         4. 수식 입력:
             ```
-            IF RUNNING_SUM(SUM([Sales])) > 50000 THEN RUNNING_SUM(SUM([Sales])) ELSE NULL END
+            IF RUNNING_SUM(SUM([Sales])) > 500000 THEN RUNNING_SUM(SUM([Sales])) ELSE NULL END
             ```
-        5. 계산 필드를 Rows에 추가 → 누적 매출이 5만을 넘는 시점부터 표시됨.
+        5. 계산 필드를 Rows에 추가 → 누적 매출이 50만을 넘는 시점부터 표시됨.
 
 
 
@@ -769,6 +773,7 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
         2. "Order Date"를 Columns에 드래그 → "Quarter"로 설정.
         3. "Profit"을 Rows에 드래그, "Line" 차트 확인.
         4. 색상으로 "Profit" 양수/음수 구분 (계산 필드 생성: `IF SUM([Profit]) > 0 THEN "Profit" ELSE "Loss" END`).
+            - 색상 범례를 더블클릭하여 수익은 파란색, 손실은 빨간색으로 설정
 
 ### **6.3.다양한 디스플레이 기기를 위한 설계**
 - **반응형 설계**: 데스크톱, 태블릿, 모바일 등 기기에 맞춘 대시보드 최적화.

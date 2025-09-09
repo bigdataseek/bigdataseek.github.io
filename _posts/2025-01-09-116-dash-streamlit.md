@@ -517,6 +517,7 @@ if uploaded_file is not None:
 - **모델 학습시키기**
 
 ```python
+from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.datasets import load_iris
 import joblib
@@ -525,12 +526,22 @@ import joblib
 iris = load_iris()
 X, y = iris.data, iris.target
 
-# 모델 학습
-model = RandomForestClassifier()
-model.fit(X, y)
+# train/test 분할 (일반적인 방법)
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+) # stratify: 클래스 분포를 보존
+
+# 모델 학습 (train 데이터만 사용)
+model = RandomForestClassifier(random_state=42)
+model.fit(X_train, y_train)
+
+# 모델 평가 (test 데이터로)
+accuracy = model.score(X_test, y_test)
+print(f"Test Accuracy: {accuracy:.4f}")
 
 # 모델 저장
-joblib.dump(model, "rfc_model.pkl", compress=3)
+joblib.dump(model, "rfc_model.pkl", compress=3) 
+#compress=3: 저장 속도와 파일 크기 사이의 적절한 균형을 맞추는 중간 수준의 압축
 ```
 
 - **학습된 모델 로드하여 에측하기**
@@ -604,7 +615,7 @@ if city:
         st.write(f"- 습도: {humidity}%")
     else:
         st.error("도시 이름을 확인하거나 API 키를 다시 확인해주세요.")
-``
+```
 
 **실행 방법**
 1. OpenWeatherMap(https://openweathermap.org/)에서 무료 API 키를 발급받습니다.
