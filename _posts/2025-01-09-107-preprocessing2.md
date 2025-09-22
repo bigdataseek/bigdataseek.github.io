@@ -53,6 +53,11 @@ print("\nTest 데이터 결측치 현황:\n", missing_data_test[missing_data_tes
 train['LotFrontage'] = train.groupby('Neighborhood')['LotFrontage'].transform(lambda x: x.fillna(x.median()))
 test['LotFrontage'] = test.groupby('Neighborhood')['LotFrontage'].transform(lambda x: x.fillna(x.median()))
 
+#agg()나 apply()와의 차이점
+#agg() / apply(): 그룹별로 요약된 결과 (한 그룹 → 한 행)
+#transform(): 그룹별 계산 결과를 원본 행에 모두 부여 (한 그룹 → 여러 행)
+#즉, "요약하지 않고 원본 형태를 유지하면서 그룹별 연산 결과를 넣고 싶을 때" transform()을 사용합니다.
+
 # 기타 수치형 결측치 처리
 numeric_missing = ['MasVnrArea', 'GarageYrBlt']
 for col in numeric_missing:
@@ -149,6 +154,7 @@ def create_messy_ecommerce_data():
     
     # 인위적으로 문제 있는 데이터 생성
     # 0과 1 사이의 균일분포에서 n_records개의 무작위 숫자를 생성
+    # Pandas는 부울 마스크를 인덱스 라벨을 찾는 것과 유사한 방식으로 처리하여 특정 조건에 맞는 행을 효율적으로 선택
     df.loc[np.random.random(n_records) < 0.12, 'customer_age'] = np.nan
     df.loc[np.random.random(n_records) < 0.15, 'customer_income'] = np.nan
     df.loc[np.random.random(n_records) < 0.08, 'customer_rating'] = np.nan

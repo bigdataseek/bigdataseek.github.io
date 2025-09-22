@@ -99,7 +99,7 @@ plt.ylabel('누적 빈도')
 plt.show()
 ```
 
-**4. 상자 그림 (Box Plot)**
+**4. 박스 플롯 (Box Plot)**
 
 데이터의 분포와 이상치를 보여줍니다.
 
@@ -235,16 +235,24 @@ plt.show()
 import numpy as np
 import matplotlib.pyplot as plt
 
-x = np.linspace(0, 10, 100)
+x = np.linspace(0,10,100)
 y = np.sin(x)
 
-fig = plt.figure()                  # Figure 생성
-ax = fig.add_subplot(111)           # 2D 서브플롯(1행1열 첫번째)
-ax.plot(x, y, color='red', label='sin(x)')
-ax.set_title("2D Line Plot")        # 제목
-ax.set_xlabel("X-axis")            # 축 레이블
-ax.set_ylabel("Y-axis")
-ax.legend()                        # 범례
+fig = plt.figure(figsize=(12,8))
+ax = fig.add_subplot(121)
+ax.plot(x,y,color='red',label='sin(x)')
+ax.set_title('2D Line Plot')
+ax.set_xlabel('X 축')
+ax.set_ylabel('Y 축')
+ax.legend()
+
+y2 = np.cos(x)
+ax2 = fig.add_subplot(122)
+ax2.plot(x,y2,color='orange',label='cos(x)')
+ax2.set_title('2D Line Plot2')
+ax2.set_xlabel('X 축')
+ax2.set_ylabel('Y 축')
+ax2.legend()
 plt.show()
 ```
 

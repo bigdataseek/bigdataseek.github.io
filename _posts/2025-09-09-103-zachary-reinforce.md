@@ -1,5 +1,5 @@
 ---
-title: 10차시 3 :Reinforcement Learning 
+title: 10차시 3 :Zachary(Reinforcement Learning)
 layout: single
 classes: wide
 categories:

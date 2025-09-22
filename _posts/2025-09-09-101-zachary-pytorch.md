@@ -1,5 +1,5 @@
 ---
-title: 10차시 1 :PyTorch
+title: 10차시 1 :Zachary(PyTorch)
 layout: single
 classes: wide
 categories:

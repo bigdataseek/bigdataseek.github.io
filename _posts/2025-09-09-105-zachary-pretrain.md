@@ -1,5 +1,5 @@
 ---
-title: 10차시 5 :Pretrain
+title: 10차시 5 :Zachary(Pretrain)
 layout: single
 classes: wide
 categories:

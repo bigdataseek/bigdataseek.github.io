@@ -1,5 +1,5 @@
 ---
-title: 10차시 6:Transformer
+title: 10차시 6:Zachary(Transformer)
 layout: single
 classes: wide
 categories:
