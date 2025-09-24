@@ -259,6 +259,7 @@ plt.show()
 3. `wcss_ls`: 각 클러스터 수에 대한 WCSS 값을 저장합니다.  
 4. `plt.plot`: 클러스터 수와 WCSS를 그래프로 그려 "궁극점"(Elbow)을 찾습니다.  
    - 그래프에서 꺾이는 지점(급격히 감소가 멈추는 곳)이 적절한 클러스터 수입니다.
+   - "더 이상 큰 향상이 없는 지점"에서 멈추는 것이 엘보우 방법의 본질
 
 
 ### 1.14 Silhouette Visualizer로 클러스터 평가
@@ -282,6 +283,12 @@ for i in [2, 3, 4, 5, 6,7,8,9]:
    - 실루엣 점수는 클러스터링의 품질을 평가하며, 값이 높을수록 클러스터가 잘 형성된 것입니다.  
 3. 각 그래프는 클러스터 수(2~9)에 따른 실루엣 점수 분포를 보여줍니다.
 4. 스코어가 약간 낮더라도 해석력 + 데이터 특성과 맞으면 선택 가능
+5. 수직 점선: 전체 평균 실루엣 점수를 나타냄(기준선)
+6. 실루엣 점수의 의미
+- **범위**: -1.0 ~ +1.0
+- **+1에 가까울수록**: 완벽한 클러스터링
+- **0에 가까울수록**: 클러스터 경계에 위치
+- **-1에 가까울수록**: 잘못된 클러스터링
 
 ### 1.15 최종 클러스터링 및 실루엣 점수 계산
 ```python
@@ -296,7 +303,7 @@ silhouette_score(X_std, labels = kmeans.labels_)
 1. `KMeans(n_clusters=3)`: 클러스터 수를 3으로 설정한 K-평균 모델을 만듭니다.  
 2. `fit(X_std)`: 로그 변환된 데이터로 클러스터링을 수행합니다.  
 3. `silhouette_score`: 클러스터링 결과의 품질을 평가합니다(0~1 사이, 높을수록 좋음).  
-   - 결과는 실루엣 점수(예: 0.704...)를 반환합니다.
+   - 결과는 실루엣 점수(예: 0.534...)를 반환합니다.
 
 ### 1.16 클러스터 레이블 추가
 ```python
@@ -519,9 +526,9 @@ for customer in customer_ids:
     while y<=len(customer_df):
         # Base
         feat_x1_x14 = customer_df.nr_trans[x1:x14].values.tolist()
-        trans_next_3_days = np.count_nonzero(customer_df.nr_trans[x14:y])
-        response = [1 if trans_next_3_days!=0 else 0][0]
-      #   response = [0 if trans_next_3_days!=0 else 1][0]
+        trans_next_3_days = np.count_nonzero(customer_df.nr_trans[x14:y]) #0이 아닌 값의 개수 세기
+        response = 1 if trans_next_3_days!=0 else 0
+      #   response = 0 if trans_next_3_days!=0 else 1
         responses.append(response)
 
         # Additional features
@@ -841,7 +848,7 @@ sns.lineplot(metrics)
 
   
 교차 검증 결과를 시각화합니다.  
-1. `pd.DataFrame.from_dict`: 각 폴드의 성능 지표(정확도, 정밀도, 재현율, 누락률)를 데이터프레임으로 만듭니다.  
+1. `pd.DataFrame.from_dict`: 각 폴드의 성능 지표(정확도, 정밀도, 재현율, 누락률)를 데이터프레임으로 만듭니다.  다양한 방향(orientation) 설정 가능.
 2. `sns.lineplot`: 각 지표를 선 그래프로 그려 비교합니다.  
 
 **결과**: 모델의 성능을 시각적으로 확인할 수 있는 그래프가 생성됩니다.

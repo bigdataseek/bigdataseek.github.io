@@ -365,7 +365,7 @@ if __name__ == "__main__":
     5. yourusername_pythonanywhere_com_wsgi.py파일의 내용을 다음과 같이 설정
         ```python
         import sys
-s
+
         # add your project directory to the sys.path
         project_home = '/home/yourusername/yourprojectfolder'
         if project_home not in sys.path:
@@ -441,7 +441,7 @@ if user_input:
 number = st.number_input("숫자를 입력하세요:", min_value=0, max_value=100, value=50)
 st.write(f"입력된 숫자는 {number}입니다.")
 
-ㄴ
+
 slider_value = st.slider("슬라이더를 조정하세요:", 0, 100, 50)
 st.write(f"슬라이더 값: {slider_value}")
 ```

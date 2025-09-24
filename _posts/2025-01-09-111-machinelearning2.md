@@ -84,6 +84,7 @@ y = np.array([1, 4, 9, 16, 25])  # y = x^2 관계
 # 입력 X에 대해 상수항, 1차항, 2차항을 만들어 새로운 특성 행렬로 변환.
 poly = PolynomialFeatures(degree=2)
 X_poly = poly.fit_transform(X)
+print('다항식으로 변환된 X_poly: \n',X_poly)
 
 # 모델 학습
 model = LinearRegression()
@@ -95,6 +96,13 @@ print("절편(b):", model.intercept_)
 print("예측값:", model.predict(poly.transform([[6]])))  # x=6일 때 y 예측
 ```
 ```python
+다항식으로 변환된 X_poly :
+[[ 1.  1.  1.]
+ [ 1.  2.  4.]
+ [ 1.  3.  9.]
+ [ 1.  4. 16.]
+ [ 1.  5. 25.]]
+
 계수(w): [ 0.0000000e+00 -1.0061107e-14  1.0000000e+00]
 절편(b): 8.881784197001252e-15
 예측값: [36.]
@@ -111,6 +119,7 @@ L1 정규화를 사용하여 계수의 크기를 제한하고, 일부 계수를 
 
 * 정규화의 강도를 조절하는 하이퍼파라미터.
     - alpha = 0 → 일반 선형 회귀 (정규화 없음)
+    - alpha = 1 → 기본적인 정규화 강도 
     - alpha가 클수록 계수를 0에 가깝게 강하게 제약
     - alpha=0.1은 약한 정규화
 
@@ -169,6 +178,15 @@ print("절편(b):", model.intercept_)
 print("예측값:", model.predict([[6,11.9]]))
 ```
 
+```
+계수: [0.53869113 0.72796098]
+절편(b): 0.0016015141588408
+예측값: [11.89648395]
+```
+
+**Ridge 회귀 vs Lasso 회귀**
+- Ridge (L2): 모든 계수를 작게 but 0으로 만들지 않음
+- Lasso (L1): 불필요한 계수를 정확히 0으로 만듦
 
 ## **2. 분류 (Classification)**
 
@@ -415,8 +433,9 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, Flatten, Dense
 
 # 데이터 생성 (간단한 이미지 데이터)
-# Conv1D는 3D 입력 필요:  (배치 크기, 길이, 채널 수)
-# Conv2D는 4D 입력 필요: (batch, height, width, channels)
+# Conv1D는 3D 입력 필요:  (배치 크기, 길이, 채널 수):시간,순서 데이터
+# Conv2D는 4D 입력 필요: (batch, height, width, channels): 이미지,공간 데이터
+
 X = np.random.rand(5, 8, 8, 1)  # 8x8 크기의 흑백 이미지 5장
 y = np.array([0, 0, 1, 1, 0])
 
@@ -434,8 +453,16 @@ model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy']
 model.fit(X, y, epochs=10, verbose=0)
 
 # 예측
-print("예측 확률:", model.predict(np.random.rand(1, 8, 8, 1)))
+new_data = np.random.rand(1,8,8,1)
+print(f'예측확률: {model.predict(new_data)}')
+pred_class = (pred_proba > 0.5).astype(int)
+print(f"예측 클래스: {pred_class}")
+
+# 예측확률: [[0.44169778]]
+# 예측 클래스: [[1]]
 ```
+
+
 
 
 ### **4.3 Recurrent Neural Network (RNN)**
@@ -465,6 +492,13 @@ model.fit(X, y, epochs=10, verbose=0)
 # 예측
 print("예측 확률:", model.predict(np.random.rand(1, 10, 1)))
 ```
+
+
+| RNN 유형 | 특징 | "Simple"의 의미 |
+|----------|------|----------------|
+| **SimpleRNN** | 기본 순환 구조 | 가장 단순한 구현 |
+| **LSTM** | 입력, 삭제, 출력 게이트 | 장기 의존성 해결 |
+| **GRU** | 업데이트, 리셋 게이트 | LSTM의 간소화 버전 |
 
 ---
 
@@ -512,6 +546,8 @@ X = [[1, 2], [1.5, 1.8], [5, 8], [8, 8], [1, 0.6], [9, 11]]
 # PCA 적용
 pca = PCA(n_components=1)
 X_reduced = pca.fit_transform(X)
+print(f"X_reduced: {X_reduced.flatten()}")	
+# X_reduced: [-4.56593385 -4.39775256  2.60148885  4.52983542 -5.63840244  7.47076458]
 
 # 시각화
 plt.scatter(X_reduced, [0] * len(X_reduced))
@@ -535,6 +571,7 @@ X_reduced = kpca.fit_transform(X)
 # 시각화
 plt.scatter(X_reduced, [0] * len(X_reduced))
 plt.show()
+
 ```
 
 **3. Linear Discriminant Analysis (LDA)**

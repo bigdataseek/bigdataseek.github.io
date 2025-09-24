@@ -14,7 +14,7 @@ toc_sticky: true # 목차를 고정할지 여부 (선택 사항)
 
 ### **1.1 머신러닝이란?**
 - **머신러닝의 정의와 중요성**:
-  - 데이터에서 패턴을 학습하고 이를 활용해 예측하거나 결정하는 기술.
+  - 데이터에서 패턴을 학습하고 이를 활용해 예측하거나 분류하는 기술.
   - 전통적인 프로그래밍은 명확한 규칙을 기반으로 동작하지만, 머신러닝은 데이터를 통해 규칙을 자동으로 학습.
 - **전통적인 프로그래밍과 머신러닝의 차이점**:
   - 전통적 프로그래밍: 입력 + 규칙 → 출력
@@ -380,6 +380,7 @@ plt.show()
   from sklearn.model_selection import cross_validate
 
   X, y = make_regression(n_samples=1000, random_state=0) 
+  # 회귀 분석을 위한 가상의 데이터셋을 생성
   # X는 독립변수로 100개의 feature를 갖는다,2D 배열 형태
   # y는 종속변수로 1D 배열 형태
 
@@ -411,6 +412,7 @@ plt.show()
 
     param_distributions = {'n_estimators': randint(1, 5), 'max_depth': randint(5, 10)}
     #randint()는 분포 객체로, 동적으로 무작위 샘플링을 수행하며 RandomizedSearchCV와 자연스럽게 호환.
+    #  [low, high-1] 범위의 정수에서 균등한 확률
     search = RandomizedSearchCV(estimator=RandomForestRegressor(random_state=0),
                                 n_iter=5,
                                 param_distributions=param_distributions,
