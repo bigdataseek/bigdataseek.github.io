@@ -569,10 +569,10 @@ cnn_model.summary()
 
 ### 6.3 모델 훈련 및 평가
 ```python
-# 모델 훈련 (시간 제약으로 epoch 수 조정)
+# 모델 훈련 (시간 제약으로 epoch 수 조정, epoch 10이면 40분)
 cnn_history = cnn_model.fit(
     x_train, y_train,
-    epochs=10,
+    epochs=10, 
     batch_size=64,
     validation_split=0.2
 )
@@ -652,21 +652,23 @@ x = np.array(x)
 y = np.array(y)
 
 # 텐서로 변환
+# torch.FloatTensor(x): 리스트·배열 등을 32비트 부동소수 텐서로 변환
+# .unsqueeze(2) : 텐서의 **2번 차원(0부터 세므로 세 번째 위치)**에 길이 1짜리 새 차원을 추가
 x = torch.FloatTensor(x).unsqueeze(2)  # (샘플수, 시퀀스길이, 특성수)
 y = torch.FloatTensor(y).unsqueeze(1)
 
 # RNN 모델 정의
 class SimpleRNN(nn.Module):
     def __init__(self):
-        super(SimpleRNN, self).__init__()
+        super().__init__()
         self.rnn = nn.RNN(input_size, hidden_size, batch_first=True)
         self.fc = nn.Linear(hidden_size, output_size)
     
     def forward(self, x):
         # RNN의 출력: (배치, 시퀀스, hidden_size), hidden_state
         out, _ = self.rnn(x)
-        # 마지막 시퀀스의 출력만 사용
-        out = self.fc(out[:, -1, :])
+        # 각 배치마다 RNN이 만든 마지막 시점(시퀀스)의 은닉 출력만 뽑아서 self.fc(완전연결층)에 넣겠다는 의미
+        out = self.fc(out[:, -1, :]) 
         return out
 
 model = SimpleRNN()

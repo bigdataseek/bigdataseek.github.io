@@ -460,8 +460,11 @@ plt.show()
   # Best Parameters: {'max_depth': None, 'n_estimators': 100}
   print("Best Score:", grid_search.best_score_)
   ```
+  
+### **5.3 Bayesian Optimization(베이지안 최적화)** 
+- 효율적인 하이퍼파라미터 탐색 기법으로, "지금까지의 실험 결과를 바탕으로 다음에 시도할 가장 promising한 하이퍼파라미터를 선택"하는 방식
 
-### **5.3. 어떤 경우에 사용할까?**
+### **5.4. 어떤 경우에 사용할까?**
 1. **`GridSearchCV`**:
    - 하이퍼파라미터 공간이 작고, 모든 조합을 체계적으로 탐색하고 싶을 때.
    - 예: `n_estimators=[10, 50, 100]`, `max_depth=[5, 10, 15]`처럼 제한된 범위
@@ -469,3 +472,7 @@ plt.show()
 2. **`RandomizedSearchCV`**:
    - 하이퍼파라미터 공간이 크거나 연속적인 값(예: 실수 범위)을 포함할 때.
    - 예: `n_estimators=10~200`, `max_depth=None 또는 10~50`처럼 넓은 범위
+
+3. **`BayesSearchCV`**:
+  - 연속형/범주형 파라미터 혼합
+  - 계산 비용이 큰 모델의 하이퍼파라미터 튜닝에 특히 효과적입니다. 딥러닝, XGBoost 등 학습 시간이 오래 걸리는 모델에서 Random Search보다 훨씬 효율적으로 최적점을 찾을 수 있다.

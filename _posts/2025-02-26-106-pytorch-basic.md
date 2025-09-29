@@ -1,5 +1,5 @@
 ---
-title: 10차시 1 :Zachary(PyTorch)
+title: 3차시 6:PyTorch
 layout: single
 classes: wide
 categories:
@@ -1436,3 +1436,5 @@ class FeedForwardNetwork(nn.Module):
 *   학습은 Autograd가 계산한 그래디언트를 사용하여 해당 매개변수를 반복적으로 업데이트하는 과정일 뿐입니다.
 
 이제 여러분은 엔진을 이해했습니다. 모델이 *어떻게* 학습하는지에서 *무엇을* 학습하는지로 나아갈 준비가 되었습니다—`Transformer` 자체의 아키텍처를 연구할 준비가 되었으며, 이를 현실로 만드는 PyTorch 도구와 원리에 대한 견고한 기반을 가지고 있습니다.
+
+

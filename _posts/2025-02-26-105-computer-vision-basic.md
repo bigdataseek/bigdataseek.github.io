@@ -458,33 +458,8 @@ cv2.destroyAllWindows()
     ```
 
 
-## 12. **응용 및 최신 트렌드**  
-- **실습: GAN을 사용한 이미지 생성(DCGAN, PyTorch)**  
-- dcgan은 공식 라이브러리가 아님 → 반드시 같은 폴더에 dcgan.py 파일이 있어야 함 
 
-```python
-
-import torch
-from torchvision.utils import make_grid
-from dcgan import Generator  # 사전 정의된 DCGAN Generator 모델
-
-# Generator 모델 로드
-netG = Generator().eval()
-netG.load_state_dict(torch.load('generator.pth'))# 학습 후 저장된 모델 파일
-
-# 랜덤 노이즈 생성 및 이미지 생성
-noise = torch.randn(16, 100, 1, 1)
-fake_images = netG(noise)
-
-# 결과 시각화
-grid = make_grid(fake_images, nrow=4, normalize=True)
-plt.imshow(grid.permute(1, 2, 0).detach().numpy())
-plt.show()
-```
-
-![fake_image](/assets/images/fake_image.png)
-
-## **13.전이학습**
+## **12.전이학습**
 
 - 아래는 **CIFAR-10 데이터셋**을 활용하여 사전 학습된 ResNet 모델을 Fine-tuning하는 전체 코드입니다. 학습 후에는 테스트 데이터셋으로 모델의 성능을 평가하고, Confusion Matrix와 분류 보고서를 출력
 
@@ -505,18 +480,22 @@ transform = transforms.Compose([
 ])
 
 # 2. 데이터셋 로딩 (CIFAR-10)
-
-train_dataset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-test_dataset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
-
-# 10% 데이터 사용🚀
-# train_dataset = torch.utils.data.Subset(train_dataset, indices=range(0, len(train_dataset), 10))  
+# 원본 데이터셋을 먼저 로드하여 클래스 정보를 유지합니다.
+full_train_dataset = datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+full_test_dataset = datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
 
 # 10% 데이터 사용🚀
-# test_dataset = torch.utils.data.Subset(test_dataset, indices=range(0, len(test_dataset), 10))  
+train_dataset = torch.utils.data.Subset(full_train_dataset, indices=range(0, len(full_train_dataset), 10))
+
+# 10% 데이터 사용🚀
+test_dataset = torch.utils.data.Subset(full_test_dataset, indices=range(0, len(full_test_dataset), 10))
 
 train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=32, shuffle=True)
 test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=32, shuffle=False)
+
+# Get class names from the full dataset
+class_names = full_train_dataset.classes
+
 
 # 3. 사전 학습된 ResNet 모델 로드 및 수정
 model = models.resnet18(pretrained=True)
@@ -536,7 +515,7 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 # 마지막 레이어만 학습🚀(Feature Extraction)
-# optimizer = optim.Adam(model.fc.parameters(), lr=0.001)  
+# optimizer = optim.Adam(model.fc.parameters(), lr=0.001)
 
 # 5. 학습 루프
 def train_model(model, train_loader, criterion, optimizer, num_epochs=5):
@@ -562,7 +541,8 @@ def train_model(model, train_loader, criterion, optimizer, num_epochs=5):
     print("학습 완료!")
 
 # 6. 평가 함수
-def evaluate_model(model, test_loader):
+# Pass class_names as an argument
+def evaluate_model(model, test_loader, class_names):
     model.eval()
     all_preds = []
     all_labels = []
@@ -587,18 +567,21 @@ def evaluate_model(model, test_loader):
     # Confusion Matrix 시각화
     cm = confusion_matrix(all_labels, all_preds)
     plt.figure(figsize=(10, 8))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=train_dataset.classes, yticklabels=train_dataset.classes)
+    # Use the passed class_names argument
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
     plt.xlabel('Predicted')
     plt.ylabel('True')
     plt.title('Confusion Matrix')
     plt.show()
 
     # 분류 보고서 출력
-    print(classification_report(all_labels, all_preds, target_names=train_dataset.classes))
+    # Use the passed class_names argument
+    print(classification_report(all_labels, all_preds, target_names=class_names))
 
 # 7. 학습 및 평가 실행
 train_model(model, train_loader, criterion, optimizer, num_epochs=5)
-evaluate_model(model, test_loader)
+# Pass class_names when calling evaluate_model
+evaluate_model(model, test_loader, class_names)
 ```
 
 1.  **데이터 전처리**
@@ -624,13 +607,13 @@ evaluate_model(model, test_loader)
 🔹 **출력 예시:** 
 - **테스트 정확도**
 ```
-Epoch [1/5], Loss: 0.5625
-Epoch [2/5], Loss: 0.5484
-Epoch [3/5], Loss: 0.5357
-Epoch [4/5], Loss: 0.5289
-Epoch [5/5], Loss: 0.5363
+Epoch [1/5], Loss: 1.1298
+Epoch [2/5], Loss: 0.7601
+Epoch [3/5], Loss: 0.5073
+Epoch [4/5], Loss: 0.3940
+Epoch [5/5], Loss: 0.2875
 학습 완료!
-테스트 정확도: 75.50%
+테스트 정확도: 74.50%
 ```
 
 - **Confusion Matrix**
@@ -638,21 +621,47 @@ Epoch [5/5], Loss: 0.5363
 
 - **분류 보고서**
 ```
-           precision    recall  f1-score   support
+            precision    recall  f1-score   support
 
-    airplane       0.60      0.89      0.72        87
-  automobile       0.89      0.90      0.90       100
-        bird       0.78      0.63      0.70       108
-         cat       0.63      0.64      0.64       107
-        deer       0.68      0.73      0.70        95
-         dog       0.62      0.72      0.66        95
-        frog       0.81      0.77      0.79       100
-       horse       0.83      0.68      0.75       102
-        ship       0.88      0.79      0.84       102
-       truck       0.94      0.84      0.88       104
+    airplane       0.73      0.63      0.68        87
+  automobile       0.93      0.82      0.87       100
+        bird       0.62      0.79      0.70       108
+         cat       0.71      0.49      0.58       107
+        deer       0.53      0.85      0.65        95
+         dog       0.88      0.54      0.67        95
+        frog       0.80      0.86      0.83       100
+       horse       0.74      0.78      0.76       102
+        ship       0.90      0.78      0.84       102
+       truck       0.83      0.89      0.86       104
 
-    accuracy                           0.76      1000
-   macro avg       0.77      0.76      0.76      1000
-weighted avg       0.77      0.76      0.76      1000
+    accuracy                           0.74      1000
+   macro avg       0.77      0.74      0.74      1000
+weighted avg       0.77      0.74      0.74      1000
 ```
 
+<!-- ## 13. **응용 및 최신 트렌드**  
+- **실습: GAN을 사용한 이미지 생성(DCGAN, PyTorch)**  
+- Deep Convolutional Generative Adversarial Network(DCGAN)
+- dcgan은 공식 라이브러리가 아님 → 반드시 같은 폴더에 dcgan.py 파일이 있어야 함 
+
+```python
+
+import torch
+from torchvision.utils import make_grid
+from dcgan import Generator  # 사전 정의된 DCGAN Generator 모델
+
+# Generator 모델 로드
+netG = Generator().eval()
+netG.load_state_dict(torch.load('generator.pth'))# 학습 후 저장된 모델 파일
+
+# 랜덤 노이즈 생성 및 이미지 생성
+noise = torch.randn(16, 100, 1, 1)
+fake_images = netG(noise)
+
+# 결과 시각화
+grid = make_grid(fake_images, nrow=4, normalize=True)
+plt.imshow(grid.permute(1, 2, 0).detach().numpy())
+plt.show()
+```
+
+![fake_image](/assets/images/fake_image.png) -->
