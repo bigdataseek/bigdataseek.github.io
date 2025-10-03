@@ -1,5 +1,5 @@
 ---
-title: 5차시 1:AI Research Papers 1
+title: 11차시 1:AI Research Papers 1
 layout: single
 classes: wide
 categories:
