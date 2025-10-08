@@ -1,5 +1,5 @@
 ---
-title: 4차시 4 :StatQuest(Machin Learning 2)
+title: 4차시 4 :StatQuest(Machine Learning 2)
 layout: single
 classes: wide
 categories:

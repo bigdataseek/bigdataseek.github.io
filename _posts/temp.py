@@ -47,3 +47,51 @@ try:
 
 except requests.exceptions.RequestException as e:
     print(f"네트워크 오류 발생: {e}")
+
+
+
+
+좋아요 👍 자바스크립트 입문자용으로 이해하기 쉬운 **외부 JavaScript 파일 사용 예시**를 아래처럼 작성할 수 있습니다.
+HTML과 JS 파일을 분리한 기본 예제입니다.
+
+---
+
+### 📄 index.html
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>외부 JavaScript 예제</title>
+</head>
+<body>
+  <h1>외부 JavaScript 파일 예제</h1>
+  <button onclick="sayHello()">인사하기</button>
+
+  <!-- 외부 JS 파일 불러오기 -->
+  <script src="app.js"></script>
+</body>
+</html>
+```
+
+### 📄 app.js
+
+```javascript
+// 외부 JavaScript 파일 (app.js)
+function sayHello() {
+  alert("안녕하세요! 외부 JavaScript 파일에서 실행되었습니다 😊");
+}
+```
+
+---
+
+### 💡설명
+
+* `app.js` 파일은 HTML과 분리되어 있으므로, 코드를 **더 깔끔하게 관리**할 수 있습니다.
+* `<script src="app.js"></script>` 태그를 이용해 **HTML에 연결**합니다.
+* 여러 페이지에서 같은 `app.js`를 불러오면 **공통 기능을 재사용**할 수 있습니다.
+
+---
+
+원하신다면 이 예제를 “HTML 안에 직접 JS를 넣은 버전 → 외부 JS로 분리한 버전” 비교 형태로도 만들어드릴까요? (입문자에게 차이를 시각적으로 보여주기에 좋습니다.)
